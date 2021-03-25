@@ -111,8 +111,6 @@ def new_food():
         food = Seg(random.randint(0, rows - 1), random.randint(0, columns - 1))
 
 # Actually use the Seg class
-
-
 def move_snake():
     global snake_len
 
@@ -224,21 +222,6 @@ def draw_food():
     screen.blit(food_img, pg.Rect(food.get_box_scale(), box))
 
 
-def handle_key(key, dir_temp):
-    global move_dir
-    if key == pg.K_ESCAPE:
-        sys.exit(0)
-    if (key == pg.K_UP or key == pg.K_w) and move_dir != "down":
-        return "up"
-    if (key == pg.K_DOWN or key == pg.K_s) and move_dir != "up":
-        return "down"
-    if (key == pg.K_LEFT or key == pg.K_a) and move_dir != "right":
-        return "left"
-    if (key == pg.K_RIGHT or key == pg.K_d) and move_dir != "left":
-        return "right"
-    return dir_temp
-
-
 screen.fill(bg_color)
 new_food()
 draw_food()
@@ -252,7 +235,17 @@ while 1:
         if event.type == pg.QUIT:
             sys.exit(0)
         if event.type == pg.KEYDOWN:
-            dir_temp = handle_key(event.key, dir_temp)
+            key = event.key
+            if key == pg.K_ESCAPE:
+                sys.exit(0)
+            if (key == pg.K_UP or key == pg.K_w) and move_dir != "down":
+                dir_temp = "up"
+            if (key == pg.K_DOWN or key == pg.K_s) and move_dir != "up":
+                dir_temp = "down"
+            if (key == pg.K_LEFT or key == pg.K_a) and move_dir != "right":
+                dir_temp = "left"
+            if (key == pg.K_RIGHT or key == pg.K_d) and move_dir != "left":
+                dir_temp = "right"
     move_dir = dir_temp
 
     screen.fill(bg_color)
