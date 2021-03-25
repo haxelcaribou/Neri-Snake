@@ -4,6 +4,13 @@ import sys
 import pygame as pg
 import random
 
+# TODO:
+# Make a GUI menu
+# Add resize options
+# Actually use the seg class in the move snake function
+# Add option for speed increase
+# Sounds?
+
 
 pg.init()
 
@@ -11,7 +18,7 @@ edge_wrap = True
 
 bg_color = 100, 100, 100
 
-wait_time = 250
+fps = 5
 
 size = width, height = 1600, 900
 grid = rows, columns = 16, 9
@@ -76,12 +83,14 @@ class Seg:
         return (self.x, self.y)
 
 
-snake = [Seg(1, 1), Seg(2, 1), Seg(3, 1), Seg(4, 1)]
+snake = [Seg(1, 1), Seg(2, 1), Seg(3, 1)]
 snake_len = len(snake)
 
 food = Seg(0, 0)
 
 screen = pg.display.set_mode(size)
+
+clock = pg.time.Clock()
 
 head_img = pg.transform.scale(pg.image.load(
     "Images/Head.png").convert_alpha(), box)
@@ -102,7 +111,7 @@ food_img = pg.transform.scale(pg.image.load(
 def handle_collision():
     print("Game Over!")
     print("Score:", snake_len)
-    sys.exit(1)
+    sys.exit(0)
 
 
 def new_food():
@@ -110,7 +119,7 @@ def new_food():
     while food in snake:
         food = Seg(random.randint(0, rows - 1), random.randint(0, columns - 1))
 
-# Actually use the Seg class
+
 def move_snake():
     global snake_len
 
@@ -153,6 +162,9 @@ def move_snake():
 
     if head_seg == food.get():
         snake_len += 1
+        if snake_len == rows * columns:
+            print("You Win!")
+            sys.exit(0)
         new_food()
 
     for seg in snake[:-1]:
@@ -227,7 +239,7 @@ new_food()
 draw_food()
 draw_snake()
 pg.display.flip()
-pg.time.wait(wait_time)
+clock.tick(fps)
 
 while 1:
     dir_temp = move_dir
@@ -255,4 +267,4 @@ while 1:
     draw_snake()
 
     pg.display.flip()
-    pg.time.wait(wait_time)
+    clock.tick(fps)
