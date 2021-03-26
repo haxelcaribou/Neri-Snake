@@ -16,7 +16,7 @@ pg.init()
 
 edge_wrap = True
 
-bg_color = 100, 100, 100
+bg_color = 50, 50, 50
 
 fps = 5
 
@@ -28,17 +28,13 @@ move_dir = "right"
 
 
 class Seg:
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-
-    def __init__(self, coords):
-        self.x = coords[0]
-        self.y = coords[1]
-
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    def __init__(self, arg1, arg2=None):
+        if type(arg1) is tuple:
+            self.x = arg1[0]
+            self.y = arg1[1]
+        else:
+            self.x = arg1
+            self.y = arg2
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
@@ -48,6 +44,9 @@ class Seg:
 
     def __cmp__(self, other):
         return self.x == other.x and self.y == other.y
+
+    def __str__(self):
+        return str(self.get())
 
     def add(self, coords):
         self.x = self.x + coords[0]
@@ -81,6 +80,9 @@ class Seg:
 
     def get(self):
         return (self.x, self.y)
+
+    def copy(self):
+        return Seg(self.get())
 
 
 snake = [Seg(1, 1), Seg(2, 1), Seg(3, 1)]
@@ -123,44 +125,42 @@ def new_food():
 def move_snake():
     global snake_len
 
-    head_seg = snake[-1].get()
+    snake.append(snake[-1].copy())
 
     if move_dir == "right":
-        if head_seg[0] == rows - 1:
+        if snake[-1].x == rows - 1:
             if edge_wrap:
-                snake.append(Seg(0, head_seg[1]))
+                snake[-1].x = 0
             else:
                 handle_collision()
         else:
-            snake.append(Seg(head_seg[0] + 1, head_seg[1]))
+            snake[-1].add(1,0)
     if move_dir == "down":
-        if head_seg[1] == columns - 1:
+        if snake[-1].y == columns - 1:
             if edge_wrap:
-                snake.append(Seg(head_seg[0], 0))
+                snake[-1].y = 0
             else:
                 handle_collision()
         else:
-            snake.append(Seg(head_seg[0], head_seg[1] + 1))
+            snake[-1].add(0,1)
     if move_dir == "left":
-        if head_seg[0] == 0:
+        if snake[-1].x == 0:
             if edge_wrap:
-                snake.append(Seg(rows - 1, head_seg[1]))
+                snake[-1].x = rows - 1
             else:
                 handle_collision()
         else:
-            snake.append(Seg(head_seg[0] - 1, head_seg[1]))
+            snake[-1].sub(1,0)
     if move_dir == "up":
-        if head_seg[1] == 0:
+        if snake[-1].y == 0:
             if edge_wrap:
-                snake.append(Seg(head_seg[0], columns - 1))
+                snake[-1].y = columns - 1
             else:
                 handle_collision()
         else:
-            snake.append(Seg(head_seg[0], head_seg[1] - 1))
+            snake[-1].sub(0,1)
 
-    head_seg = snake[-1].get()
-
-    if head_seg == food.get():
+    if snake[-1] == food:
         snake_len += 1
         if snake_len == rows * columns:
             print("You Win!")
@@ -168,7 +168,7 @@ def move_snake():
         new_food()
 
     for seg in snake[:-1]:
-        if seg.get() == head_seg:
+        if seg.get() == snake[-1].get():
             handle_collision()
 
     if len(snake) > snake_len:
