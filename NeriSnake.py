@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Sorry windows, I never loved you
 
 import sys
 import pygame as pg
@@ -13,17 +14,23 @@ import random
 
 pg.init()
 
-edge_wrap = False
+
+### Options ###
+
+edge_wrap = False # Whether hitting the edge kills you
 
 bg_color = 50, 50, 50
 
 fps = 5
 
-size = width, height = 1600, 900
-grid = rows, columns = 16, 9
+size = width, height = 1600, 900 # Size of the game viewport
+grid = rows, columns = 16, 9 # Number of rows and columns
+
+### ~~~~~~~ ###
+
+
+
 box = box_width, box_height = int(width / rows), int(height / columns)
-
-
 
 class Seg:
     def __init__(self, arg1, arg2=None):
