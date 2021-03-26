@@ -7,14 +7,13 @@ import random
 # TODO:
 # Make a GUI menu
 # Add resize options
-# Actually use the seg class in the move snake function
 # Add option for speed increase
 # Sounds?
 
 
 pg.init()
 
-edge_wrap = True
+edge_wrap = False
 
 bg_color = 50, 50, 50
 
@@ -24,7 +23,6 @@ size = width, height = 1600, 900
 grid = rows, columns = 16, 9
 box = box_width, box_height = int(width / rows), int(height / columns)
 
-move_dir = "right"
 
 
 class Seg:
@@ -90,6 +88,8 @@ snake_len = len(snake)
 
 food = Seg(0, 0)
 
+move_dir = "right"
+
 screen = pg.display.set_mode(size)
 
 clock = pg.time.Clock()
@@ -134,7 +134,7 @@ def move_snake():
             else:
                 handle_collision()
         else:
-            snake[-1].add(1,0)
+            snake[-1].add(1, 0)
     if move_dir == "down":
         if snake[-1].y == columns - 1:
             if edge_wrap:
@@ -142,7 +142,7 @@ def move_snake():
             else:
                 handle_collision()
         else:
-            snake[-1].add(0,1)
+            snake[-1].add(0, 1)
     if move_dir == "left":
         if snake[-1].x == 0:
             if edge_wrap:
@@ -150,7 +150,7 @@ def move_snake():
             else:
                 handle_collision()
         else:
-            snake[-1].sub(1,0)
+            snake[-1].sub(1, 0)
     if move_dir == "up":
         if snake[-1].y == 0:
             if edge_wrap:
@@ -158,7 +158,7 @@ def move_snake():
             else:
                 handle_collision()
         else:
-            snake[-1].sub(0,1)
+            snake[-1].sub(0, 1)
 
     if snake[-1] == food:
         snake_len += 1
