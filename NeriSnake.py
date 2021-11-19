@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # Sorry windows, I never loved you
 
+# pylint: disable=no-member
+
 import sys
-import pygame as pg
 import random
+import pygame as pg
 
 # TODO:
 # Make a GUI menu
@@ -17,24 +19,24 @@ pg.init()
 
 ### Options ###
 
-edge_wrap = False # Whether hitting the edge kills you
+EDGE_WRAP = False  # Whether hitting the edge kills you
 
-bg_color = 50, 50, 50
+BG_COLOR = 50, 50, 50
 
-fps = 5
+FPS = 5
 
-size = width, height = 1600, 900 # Size of the game viewport
-grid = rows, columns = 16, 9 # Number of rows and columns
+SIZE = WIDTH, HEIGHT = 1600, 900  # Size of the game viewport
+GRID = ROWS, COLUMNS = 16, 9  # Number of rows and columns
 
 ### ~~~~~~~ ###
 
 
+box = box_width, box_height = int(WIDTH / ROWS), int(HEIGHT / COLUMNS)
 
-box = box_width, box_height = int(width / rows), int(height / columns)
 
 class Seg:
     def __init__(self, arg1, arg2=None):
-        if type(arg1) is tuple:
+        if isinstance(arg1, tuple):
             self.x = arg1[0]
             self.y = arg1[1]
         else:
@@ -53,7 +55,7 @@ class Seg:
     def __str__(self):
         return str(self.get())
 
-    def add(self, coords):
+    def addSeg(self, coords):
         self.x = self.x + coords[0]
         self.y = self.y + coords[1]
 
@@ -61,7 +63,7 @@ class Seg:
         self.x = self.x + x
         self.y = self.y + y
 
-    def sub(self, coords):
+    def subSeg(self, coords):
         self.x = self.x - coords[0]
         self.y = self.y - coords[1]
 
@@ -73,13 +75,13 @@ class Seg:
         return (self.x * box_width, self.y * box_height)
 
     def get_next_dir(self, seg):
-        if seg.x - self.x == -1 or (seg.x == rows - 1 and self.x == 0):
+        if seg.x - self.x == -1 or (seg.x == ROWS - 1 and self.x == 0):
             return "left"
-        if seg.x - self.x == 1 or (seg.x == 0 and self.x == rows - 1):
+        if seg.x - self.x == 1 or (seg.x == 0 and self.x == ROWS - 1):
             return "right"
-        if seg.y - self.y == -1 or (seg.y == columns - 1 and self.y == 0):
+        if seg.y - self.y == -1 or (seg.y == COLUMNS - 1 and self.y == 0):
             return "up"
-        if seg.y - self.y == 1 or (seg.y == 0 and self.y == columns - 1):
+        if seg.y - self.y == 1 or (seg.y == 0 and self.y == COLUMNS - 1):
             return "down"
         return "same"
 
@@ -97,7 +99,7 @@ food = Seg(0, 0)
 
 move_dir = "right"
 
-screen = pg.display.set_mode(size)
+screen = pg.display.set_mode(SIZE)
 
 clock = pg.time.Clock()
 
@@ -126,7 +128,7 @@ def handle_collision():
 def new_food():
     global food
     while food in snake:
-        food = Seg(random.randint(0, rows - 1), random.randint(0, columns - 1))
+        food = Seg(random.randint(0, ROWS - 1), random.randint(0, COLUMNS - 1))
 
 
 def move_snake():
@@ -135,16 +137,16 @@ def move_snake():
     snake.append(snake[-1].copy())
 
     if move_dir == "right":
-        if snake[-1].x == rows - 1:
-            if edge_wrap:
+        if snake[-1].x == ROWS - 1:
+            if EDGE_WRAP:
                 snake[-1].x = 0
             else:
                 handle_collision()
         else:
             snake[-1].add(1, 0)
     if move_dir == "down":
-        if snake[-1].y == columns - 1:
-            if edge_wrap:
+        if snake[-1].y == COLUMNS - 1:
+            if EDGE_WRAP:
                 snake[-1].y = 0
             else:
                 handle_collision()
@@ -152,16 +154,16 @@ def move_snake():
             snake[-1].add(0, 1)
     if move_dir == "left":
         if snake[-1].x == 0:
-            if edge_wrap:
-                snake[-1].x = rows - 1
+            if EDGE_WRAP:
+                snake[-1].x = ROWS - 1
             else:
                 handle_collision()
         else:
             snake[-1].sub(1, 0)
     if move_dir == "up":
         if snake[-1].y == 0:
-            if edge_wrap:
-                snake[-1].y = columns - 1
+            if EDGE_WRAP:
+                snake[-1].y = COLUMNS - 1
             else:
                 handle_collision()
         else:
@@ -169,7 +171,7 @@ def move_snake():
 
     if snake[-1] == food:
         snake_len += 1
-        if snake_len == rows * columns:
+        if snake_len == ROWS * COLUMNS:
             print("You Win!")
             sys.exit(0)
         new_food()
@@ -241,12 +243,12 @@ def draw_food():
     screen.blit(food_img, pg.Rect(food.get_box_scale(), box))
 
 
-screen.fill(bg_color)
+screen.fill(BG_COLOR)
 new_food()
 draw_food()
 draw_snake()
 pg.display.flip()
-clock.tick(fps)
+clock.tick(FPS)
 
 while 1:
     dir_temp = move_dir
@@ -257,21 +259,21 @@ while 1:
             key = event.key
             if key == pg.K_ESCAPE:
                 sys.exit(0)
-            if (key == pg.K_UP or key == pg.K_w) and move_dir != "down":
+            if key in (pg.K_UP, pg.K_w) and move_dir != "down":
                 dir_temp = "up"
-            if (key == pg.K_DOWN or key == pg.K_s) and move_dir != "up":
+            if key in (pg.K_DOWN, pg.K_s) and move_dir != "up":
                 dir_temp = "down"
-            if (key == pg.K_LEFT or key == pg.K_a) and move_dir != "right":
+            if key in (pg.K_LEFT, pg.K_a) and move_dir != "right":
                 dir_temp = "left"
-            if (key == pg.K_RIGHT or key == pg.K_d) and move_dir != "left":
+            if key in (pg.K_RIGHT, pg.K_d) and move_dir != "left":
                 dir_temp = "right"
     move_dir = dir_temp
 
-    screen.fill(bg_color)
+    screen.fill(BG_COLOR)
 
     move_snake()
     draw_food()
     draw_snake()
 
     pg.display.flip()
-    clock.tick(fps)
+    clock.tick(FPS)
